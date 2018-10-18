@@ -3,8 +3,11 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/VerifyCodeView.iml" filepath="$PROJECT_DIR$/VerifyCodeView.iml" />
+      <module fileurl="file://D:\Respository\VerifyCodeView\VerifyCodeView.iml" filepath="D:\Respository\VerifyCodeView\VerifyCodeView.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\Respository\VerifyCodeView\app\app.iml" filepath="D:\Respository\VerifyCodeView\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/vertifycodeview/vertifycodeview.iml" filepath="$PROJECT_DIR$/vertifycodeview/vertifycodeview.iml" />
+      <module fileurl="file://D:\Respository\VerifyCodeView\vertifycodeview\vertifycodeview.iml" filepath="D:\Respository\VerifyCodeView\vertifycodeview\vertifycodeview.iml" />
     </modules>
   </component>
 </project>

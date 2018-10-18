@@ -10,6 +10,7 @@ import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.annotation.RequiresApi;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
@@ -17,6 +18,9 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.WindowManager;
+import android.view.inputmethod.BaseInputConnection;
+import android.view.inputmethod.EditorInfo;
+import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 
 /**
@@ -40,7 +44,7 @@ public class VerifyCodeView extends View {
     /**
      * text size,default size is 18
      */
-    private float vcTextSize = 15;
+    private float vcTextSize = 18;
     /**
      * text font,use Typeface.DEFAULT as default
      */
@@ -182,19 +186,37 @@ public class VerifyCodeView extends View {
             //show keyboard to enter text
             requestFocus();
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.showSoftInput(this, InputMethodManager.SHOW_FORCED);
+            if (imm != null) {
+                imm.showSoftInput(this, InputMethodManager.SHOW_FORCED);
+            }
         }
         return true;
     }
 
     @Override
+    public InputConnection onCreateInputConnection(EditorInfo outAttrs) {
+        //define keyboard to number keyboard
+        BaseInputConnection fic = new BaseInputConnection(this, false) {
+            @Override
+            public boolean deleteSurroundingText(int beforeLength, int afterLength) {
+                return sendKeyEvent(new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_DEL)) && sendKeyEvent(new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_DEL));
+            }
+        };
+        outAttrs.actionLabel = null;
+        outAttrs.inputType = InputType.TYPE_CLASS_PHONE;
+        outAttrs.imeOptions = EditorInfo.IME_ACTION_NEXT;
+        return fic;
+    }
+
+    @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        //delete the last text when backspace key pressed
+        //delete the last code when backspace key pressed
         if(keyCode == KeyEvent.KEYCODE_DEL && vcTextBuilder.length() > 0){
             vcTextBuilder.deleteCharAt(vcTextBuilder.length() - 1);
             invalidate();
-        }else if(vcTextBuilder.length() < vcTextLen){
-            vcTextBuilder.append(KeyEvent.keyCodeToString(keyCode));
+        }else if(keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9 && vcTextBuilder.length() < vcTextLen){
+            //only add number code to builder
+            vcTextBuilder.append(event.getDisplayLabel());
             invalidate();
         }
         //hide keyboard when code is enough

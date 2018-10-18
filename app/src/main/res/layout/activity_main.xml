@@ -13,6 +13,6 @@
         android:layout_height="80dp"
         app:vcTextColor="@color/colorPrimary"
         app:vcTextLen="4"
-        app:vcTextSize="18sp" />
+        app:vcTextSize="18sp"/>
 
 </android.support.constraint.ConstraintLayout>
