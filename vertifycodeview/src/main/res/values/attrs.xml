@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <declare-styleable name="VerifyCodeView">
+
+        <attr name="vcTextColor" format="color|reference"/>
+        <attr name="vcTextLen" format="integer"/>
+        <attr name="vcTextSize" format="dimension|reference"/>
+        <attr name="vcTextFont" format="string|reference"/>
+
+    </declare-styleable>
+
+</resources>

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.github.sample.MainActivity"
+    tools:layout_editor_absoluteY="81dp">
+
+    <com.github.gongw.VerifyCodeView
+        android:id="@+id/verifyCodeView"
+        android:layout_width="300dp"
+        android:layout_height="80dp"
+        app:vcTextColor="@color/colorPrimary"
+        app:vcTextLen="4"
+        app:vcTextSize="18sp" />
+
+</android.support.constraint.ConstraintLayout>
