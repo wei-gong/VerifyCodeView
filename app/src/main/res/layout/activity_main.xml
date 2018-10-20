@@ -17,13 +17,13 @@
             android:layout_width="240dp"
             android:layout_height="50dp"
             android:layout_marginTop="32dp"
-            app:vcTextColor="#2b2b2b"
+            app:vcTextColor="#000000"
             app:vcTextCount="4"
             app:vcTextSize="36sp"
             app:vcDividerWidth="8dp"
             app:vcWrapper="underLine"
             app:vcWrapperColor="#313335"
-            app:vcNextWrapperColor="#32ae49"
+            app:vcNextWrapperColor="#3f51b5"
             app:vcWrapperStrokeWidth="2dp" />
 
         <com.github.gongw.VerifyCodeView
@@ -50,8 +50,8 @@
             app:vcTextSize="36sp"
             app:vcDividerWidth="8dp"
             app:vcWrapper="square"
-            app:vcWrapperColor="#90b65c"
-            app:vcNextWrapperColor="#139d57"
+            app:vcWrapperColor="#0078D7"
+            app:vcNextWrapperColor="#b63b21"
             app:vcWrapperStrokeWidth="2dp"/>
 
         <com.github.gongw.VerifyCodeView
