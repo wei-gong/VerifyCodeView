@@ -1,18 +1,69 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.github.sample.MainActivity"
-    tools:layout_editor_absoluteY="81dp">
+    >
 
-    <com.github.gongw.VerifyCodeView
-        android:id="@+id/verifyCodeView"
-        android:layout_width="300dp"
-        android:layout_height="80dp"
-        app:vcTextColor="@color/colorPrimary"
-        app:vcTextLen="4"
-        app:vcTextSize="18sp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:gravity="center">
 
-</android.support.constraint.ConstraintLayout>
+        <com.github.gongw.VerifyCodeView
+            android:id="@+id/vc_underLine"
+            android:layout_width="240dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="32dp"
+            app:vcTextColor="#2b2b2b"
+            app:vcTextCount="4"
+            app:vcTextSize="36sp"
+            app:vcDividerWidth="8dp"
+            app:vcWrapper="underLine"
+            app:vcWrapperColor="#3c3f41"
+            app:vcWrapperStrokeWidth="2dp" />
+
+        <com.github.gongw.VerifyCodeView
+            android:id="@+id/vc_centerLine"
+            android:layout_width="240dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="42dp"
+            app:vcTextColor="#b63b21"
+            app:vcTextCount="4"
+            app:vcTextSize="36sp"
+            app:vcDividerWidth="8dp"
+            app:vcWrapper="centerLine"
+            app:vcWrapperColor="#d37562"
+            app:vcWrapperStrokeWidth="3dp"/>
+
+        <com.github.gongw.VerifyCodeView
+            android:id="@+id/vc_square"
+            android:layout_width="240dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="42dp"
+            app:vcTextColor="#139d57"
+            app:vcTextCount="4"
+            app:vcTextSize="36sp"
+            app:vcDividerWidth="8dp"
+            app:vcWrapper="square"
+            app:vcWrapperColor="#90b65c"
+            app:vcWrapperStrokeWidth="2dp"/>
+
+        <com.github.gongw.VerifyCodeView
+            android:id="@+id/vc_circle"
+            android:layout_width="240dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="42dp"
+            app:vcTextColor="#0078d7"
+            app:vcTextCount="4"
+            app:vcTextSize="36sp"
+            app:vcDividerWidth="8dp"
+            app:vcWrapper="circle"
+            app:vcWrapperColor="#38cbf4"
+            app:vcWrapperStrokeWidth="2dp" />
+
+    </LinearLayout>
+
+</ScrollView>

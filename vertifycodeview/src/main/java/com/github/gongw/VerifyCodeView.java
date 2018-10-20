@@ -6,6 +6,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.PointF;
+import android.graphics.RectF;
 import android.graphics.Typeface;
 import android.os.Build;
 import android.support.annotation.Nullable;
@@ -22,6 +23,11 @@ import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
+import com.github.gongw.wrapper.CenterLineWrapper;
+import com.github.gongw.wrapper.CircleWrapper;
+import com.github.gongw.wrapper.SquareWrapper;
+import com.github.gongw.wrapper.UnderLineWrapper;
+import com.github.gongw.wrapper.VerifyCodeWrapper;
 
 /**
  * A view designed for inputting verification code.
@@ -30,29 +36,33 @@ import android.view.inputmethod.InputMethodManager;
 
 public class VerifyCodeView extends View {
     /**
-     * length of text
+     * verification code text count
      */
-    private int vcTextLen = 4;
+    private int vcTextCount = 4;
     /**
-     * text builder
+     * verification code text builder
      */
     private StringBuilder vcTextBuilder;
     /**
-     * text color,default color is CYAN
+     * verification code text color
      */
-    private int vcTextColor = Color.CYAN;
+    private int vcTextColor = Color.BLACK;
     /**
-     * text size,default size is 18
+     * verification code text size
      */
-    private float vcTextSize = 18;
+    private float vcTextSize = 36;
     /**
-     * text font,use Typeface.DEFAULT as default
+     * verification code text font
      */
     private Typeface vcTextFont = Typeface.DEFAULT;
     /**
      * paint to draw verification code text
      */
     private Paint vcTextPaint;
+    /**
+     * divider width of every verify code
+     */
+    private float vcDividerWidth = 6;
     /**
      * width of this view
      */
@@ -70,9 +80,49 @@ public class VerifyCodeView extends View {
      */
     private int screenHeight;
     /**
-     * point array to draw text
+     * every verification code text position
      */
-    private PointF[] vcTextCenterPoints;
+    private PointF[] vcTextPositions;
+    /**
+     * the wrapper contains verify code
+     */
+    private VerifyCodeWrapper vcWrapper;
+    /**
+     * the color of wrapper contains verify code
+     */
+    private int vcWrapperColor = Color.BLACK;
+    /**
+     * the stroke width of wrapper contains verify code
+     */
+    private float vcWrapperStrokeWidth = 1;
+    /**
+     * paint to draw verify code wrapper
+     */
+    private Paint vcWrapperPaint;
+    /**
+     * the value of under line verify code wrapper
+     */
+    private static final int WRAPPER_UNDER_LINE = 0;
+    /**
+     * the value of center line verify code wrapper
+     */
+    private static final int WRAPPER_CENTER_LINE = 1;
+    /**
+     * the value of square verify code wrapper
+     */
+    private static final int WRAPPER_SQUARE = 2;
+    /**
+     * the value of circle verify code wrapper
+     */
+    private static final int WRAPPER_CIRCLE = 3;
+    /**
+     * outer boundaries of every verify code
+     */
+    private RectF[] vcOuterRects;
+    /**
+     * boundaries of every verify code
+     */
+    private RectF[] vcTextRects;
 
     public VerifyCodeView(Context context) {
         super(context);
@@ -97,27 +147,48 @@ public class VerifyCodeView extends View {
 
     /**
      * init attributes, paint, etc
-     * @param context
-     * @param attrs
+     * @param context The Context the view is running in, through which it can
+     *        access the current theme, resources, etc.
+     * @param attrs The attributes of the XML tag that is inflating the view.
      */
     private void init(Context context, AttributeSet attrs){
         if(attrs != null){
             TypedArray typedArray = context.obtainStyledAttributes(attrs, R.styleable.VerifyCodeView);
-            vcTextColor = typedArray.getColor(R.styleable.VerifyCodeView_vcTextColor, vcTextColor);
-            vcTextSize = typedArray.getDimension(R.styleable.VerifyCodeView_vcTextSize, vcTextSize);
-            vcTextLen = typedArray.getInt(R.styleable.VerifyCodeView_vcTextLen, vcTextLen);
-            if(vcTextLen < 2){
+            vcTextCount = typedArray.getInt(R.styleable.VerifyCodeView_vcTextCount, vcTextCount);
+            if(vcTextCount < 2){
                 throw new IllegalArgumentException("The Text Length should more than 1");
             }
+            vcTextColor = typedArray.getColor(R.styleable.VerifyCodeView_vcTextColor, vcTextColor);
+            vcTextSize = typedArray.getDimension(R.styleable.VerifyCodeView_vcTextSize, vcTextSize);
+            vcDividerWidth = typedArray.getDimension(R.styleable.VerifyCodeView_vcDividerWidth, vcDividerWidth);
+            int wrapperValue = typedArray.getInt(R.styleable.VerifyCodeView_vcWrapper, WRAPPER_UNDER_LINE);
+            switch (wrapperValue){
+                default:
+                case WRAPPER_UNDER_LINE:
+                    vcWrapper = new UnderLineWrapper();
+                    break;
+                case WRAPPER_CENTER_LINE:
+                    vcWrapper = new CenterLineWrapper();
+                    break;
+                case WRAPPER_SQUARE:
+                    vcWrapper = new SquareWrapper();
+                    break;
+                case WRAPPER_CIRCLE:
+                    vcWrapper = new CircleWrapper();
+                    break;
+            }
+            vcWrapperStrokeWidth = typedArray.getDimension(R.styleable.VerifyCodeView_vcWrapperStrokeWidth, vcWrapperStrokeWidth);
+            vcWrapperColor = typedArray.getColor(R.styleable.VerifyCodeView_vcWrapperColor, vcWrapperColor);
             String fontPath = typedArray.getString(R.styleable.VerifyCodeView_vcTextFont);
             if(!TextUtils.isEmpty(fontPath)){
                 vcTextFont = Typeface.createFromAsset(context.getAssets(), fontPath);
             }
             typedArray.recycle();
         }
-        vcTextBuilder = new StringBuilder(vcTextLen);
-        vcTextBuilder.append("1234");
-        vcTextCenterPoints = new PointF[vcTextLen];
+        vcTextBuilder = new StringBuilder(vcTextCount);
+        vcTextPositions = new PointF[vcTextCount];
+        vcOuterRects = new RectF[vcTextCount];
+        vcTextRects = new RectF[vcTextCount];
         //init text paint
         vcTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
         vcTextPaint.setStyle(Paint.Style.FILL_AND_STROKE);
@@ -125,6 +196,11 @@ public class VerifyCodeView extends View {
         vcTextPaint.setTextSize(vcTextSize);
         vcTextPaint.setTypeface(vcTextFont);
         vcTextPaint.setTextAlign(Paint.Align.CENTER);
+        //init wrapper paint
+        vcWrapperPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        vcWrapperPaint.setStyle(Paint.Style.STROKE);
+        vcWrapperPaint.setColor(vcWrapperColor);
+        vcWrapperPaint.setStrokeWidth(vcWrapperStrokeWidth);
         //receive focus while in touch mode
         setFocusableInTouchMode(true);
         //get screen width and height
@@ -151,19 +227,27 @@ public class VerifyCodeView extends View {
         if(heightMode == MeasureSpec.AT_MOST){
             mHeight = screenHeight / 5;
         }
-        //calculate text points
-        calculateTextPoints();
+        //calculate positions and boundaries
+        calculatePositions();
         setMeasuredDimension(mWidth, mHeight);
     }
 
     /**
-     * calculate every text point
+     * calculate boundaries and position of every verify code item
      */
-    private void calculateTextPoints(){
+    private void calculatePositions(){
         Paint.FontMetricsInt fontMetricsInt = vcTextPaint.getFontMetricsInt();
-        float baseLine = mHeight / 2 + (fontMetricsInt.bottom - fontMetricsInt.top) / 2 - fontMetricsInt.bottom;
-        for(int i=0;i<vcTextLen;i++){
-            vcTextCenterPoints[i] = new PointF(i * mWidth / vcTextLen + mWidth / vcTextLen / 2, baseLine);
+        float textWidth = vcTextPaint.measureText("8");
+        float textHeight = fontMetricsInt.bottom - fontMetricsInt.top;
+        float baseLine = mHeight / 2 + textHeight / 2 - fontMetricsInt.bottom;
+        float vcItemWidth = (mWidth - (vcTextCount - 1) * vcDividerWidth) / vcTextCount;
+        for(int i = 0; i< vcTextCount; i++){
+            //calculate verify code text position, keep text at center
+            vcTextPositions[i] = new PointF(i * vcItemWidth + i * vcDividerWidth + vcItemWidth / 2, baseLine);
+            //calculate verify code item boundary
+            vcOuterRects[i] = new RectF(i * vcItemWidth + i * vcDividerWidth, 0, (i + 1) * vcItemWidth + i * vcDividerWidth, mHeight);
+            //calculate verify code text boundary
+            vcTextRects[i] = new RectF(vcTextPositions[i].x - textWidth / 2, vcTextPositions[i].y + fontMetricsInt.top, vcTextPositions[i].x + textWidth / 2, vcTextPositions[i].y + fontMetricsInt.bottom);
         }
     }
 
@@ -171,9 +255,15 @@ public class VerifyCodeView extends View {
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
         int realTextLen = vcTextBuilder.length();
-        for(int i=0;i<vcTextLen;i++){
+        for(int i = 0; i< vcTextCount; i++){
             if(i < realTextLen){
-                canvas.drawText(vcTextBuilder.toString(), i, i+1, vcTextCenterPoints[i].x, vcTextCenterPoints[i].y, vcTextPaint);
+                canvas.drawText(vcTextBuilder.toString(), i, i+1, vcTextPositions[i].x, vcTextPositions[i].y, vcTextPaint);
+            }
+            if(vcWrapper != null){
+                //draw wrapper if it is not covered
+                if(!vcWrapper.isCovered() || i >= realTextLen){
+                    vcWrapper.drawWrapper(canvas, vcWrapperPaint, vcOuterRects[i], vcTextRects[i]);
+                }
             }
         }
 
@@ -214,13 +304,13 @@ public class VerifyCodeView extends View {
         if(keyCode == KeyEvent.KEYCODE_DEL && vcTextBuilder.length() > 0){
             vcTextBuilder.deleteCharAt(vcTextBuilder.length() - 1);
             invalidate();
-        }else if(keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9 && vcTextBuilder.length() < vcTextLen){
+        }else if(keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9 && vcTextBuilder.length() < vcTextCount){
             //only add number code to builder
             vcTextBuilder.append(event.getDisplayLabel());
             invalidate();
         }
         //hide keyboard when code is enough
-        if(vcTextBuilder.length() >= vcTextLen ){
+        if(vcTextBuilder.length() >= vcTextCount){
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(getWindowToken(), 0);
@@ -234,22 +324,40 @@ public class VerifyCodeView extends View {
      *
      * @return code
      */
-    public String getText() {
+    public String getVcText() {
         return vcTextBuilder != null ? vcTextBuilder.toString() : "";
     }
 
     /**
-     * set verify code
+     * set verify code text
      * @param code code
      */
-    public void setText(String code) {
+    public void setVcText(String code) {
         if (code == null)
             throw new NullPointerException("Code must not null!");
-        if (code.length() > vcTextLen) {
-            code = code.substring(0, vcTextLen);
+        if (code.length() > vcTextCount) {
+            code = code.substring(0, vcTextCount);
         }
         vcTextBuilder = new StringBuilder();
         vcTextBuilder.append(code);
+        invalidate();
+    }
+
+    /**
+     * set verify code count
+     * @param count verify code count
+     */
+    public void setVcTextCount(int count){
+        this.vcTextCount = count;
+        invalidate();
+    }
+
+    /**
+     * set wrapper for VerifyCodeView
+     * @param vcWrapper Wrapper for VerifyCodeView
+     */
+    public void setVcWrapper(VerifyCodeWrapper vcWrapper){
+        this.vcWrapper = vcWrapper;
         invalidate();
     }
 }

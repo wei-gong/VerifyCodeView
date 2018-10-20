@@ -4,10 +4,18 @@
     <declare-styleable name="VerifyCodeView">
 
         <attr name="vcTextColor" format="color|reference"/>
-        <attr name="vcTextLen" format="integer"/>
+        <attr name="vcTextCount" format="integer"/>
         <attr name="vcTextSize" format="dimension|reference"/>
+        <attr name="vcDividerWidth" format="dimension|reference"/>
         <attr name="vcTextFont" format="string|reference"/>
-
+        <attr name="vcWrapper" format="enum">
+            <enum name="underLine" value="0"/>
+            <enum name="centerLine" value="1"/>
+            <enum name="square" value="2"/>
+            <enum name="circle" value="3"/>
+        </attr>
+        <attr name="vcWrapperColor" format="color|reference"/>
+        <attr name="vcWrapperStrokeWidth" format="dimension|reference"/>
     </declare-styleable>
 
 </resources>
