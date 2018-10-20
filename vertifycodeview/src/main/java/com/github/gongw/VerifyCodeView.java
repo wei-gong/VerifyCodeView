@@ -131,6 +131,14 @@ public class VerifyCodeView extends View {
      * hide key board automatically when verify code all filled
      */
     private boolean autoHideKeyboard = true;
+    /**
+     * after verify code text changed, its method will be called
+     */
+    private OnTextChangedListener onTextChangedListener;
+    /**
+     * after verify code item all filled, its method will be called
+     */
+    private OnAllFilledListener onAllFilledListener;
 
     public VerifyCodeView(Context context) {
         super(context);
@@ -317,9 +325,15 @@ public class VerifyCodeView extends View {
         }else if(keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9 && vcTextBuilder.length() < vcTextCount){
             //only add number code to builder
             vcTextBuilder.append(event.getDisplayLabel());
+            if(onTextChangedListener != null){
+                onTextChangedListener.onTextChanged(vcTextBuilder.toString());
+            }
             invalidate();
         }
         if(vcTextBuilder.length() >= vcTextCount && autoHideKeyboard){
+            if(onAllFilledListener != null){
+                onAllFilledListener.onAllFilled(vcTextBuilder.toString());
+            }
             clearFocus();
             //hide keyboard when code is enough
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
@@ -364,6 +378,15 @@ public class VerifyCodeView extends View {
     }
 
     /**
+     * clear all verify code text
+     */
+    public void clearText(){
+        if(vcTextBuilder.length() > 0){
+            vcTextBuilder.delete(0, vcTextBuilder.length()-1);
+        }
+    }
+
+    /**
      * set wrapper for VerifyCodeView
      * @param vcWrapper Wrapper for VerifyCodeView
      */
@@ -378,5 +401,36 @@ public class VerifyCodeView extends View {
      */
     public void setAutoHideKeyboard(boolean hide){
         this.autoHideKeyboard = hide;
+    }
+
+    /**
+     * after verify code text changed, its method will be called
+     */
+    public interface OnTextChangedListener{
+        /**
+         * this method is called after verify code text changed
+         * @param text text after changed
+         */
+        void onTextChanged(String text);
+    }
+
+    /**
+     * after verify code item all filled, its method will be called
+     */
+    public interface OnAllFilledListener{
+        /**
+         * this method is called after verify code item all filled,
+         * you can write your verify logic here
+         * @param text text after changed
+         */
+        void onAllFilled(String text);
+    }
+
+    public void setOnTextChangedListener(OnTextChangedListener onTextChangedListener){
+        this.onTextChangedListener = onTextChangedListener;
+    }
+
+    public void setOnAllFilledListener(OnAllFilledListener onAllFilledListener){
+        this.onAllFilledListener = onAllFilledListener;
     }
 }
