@@ -15,6 +15,7 @@ import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
 import android.util.DisplayMetrics;
+import android.util.TypedValue;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
@@ -48,7 +49,7 @@ public class VerifyCodeView extends View {
      */
     private int vcTextColor = Color.BLACK;
     /**
-     * verification code text size
+     * verification code text size,unit is sp
      */
     private float vcTextSize = 36;
     /**
@@ -60,7 +61,7 @@ public class VerifyCodeView extends View {
      */
     private Paint vcTextPaint;
     /**
-     * divider width of every verify code
+     * divider width of every verify code,unit is dp
      */
     private float vcDividerWidth = 6;
     /**
@@ -94,9 +95,9 @@ public class VerifyCodeView extends View {
     /**
      * the color of wrapper which is the next one to be filled
      */
-    private int vcNextWrapperColor = Color.GREEN;
+    private int vcNextWrapperColor = Color.BLACK;
     /**
-     * the stroke width of wrapper
+     * the stroke width of wrapper,unit is dp
      */
     private float vcWrapperStrokeWidth = 1;
     /**
@@ -175,8 +176,8 @@ public class VerifyCodeView extends View {
                 throw new IllegalArgumentException("The Text Length should more than 1");
             }
             vcTextColor = typedArray.getColor(R.styleable.VerifyCodeView_vcTextColor, vcTextColor);
-            vcTextSize = typedArray.getDimension(R.styleable.VerifyCodeView_vcTextSize, vcTextSize);
-            vcDividerWidth = typedArray.getDimension(R.styleable.VerifyCodeView_vcDividerWidth, vcDividerWidth);
+            vcTextSize = typedArray.getDimension(R.styleable.VerifyCodeView_vcTextSize, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, vcTextSize, context.getResources().getDisplayMetrics()));
+            vcDividerWidth = typedArray.getDimension(R.styleable.VerifyCodeView_vcDividerWidth, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, vcDividerWidth, context.getResources().getDisplayMetrics()));
             int wrapperValue = typedArray.getInt(R.styleable.VerifyCodeView_vcWrapper, WRAPPER_UNDER_LINE);
             switch (wrapperValue){
                 default:
@@ -193,7 +194,7 @@ public class VerifyCodeView extends View {
                     vcWrapper = new CircleWrapper();
                     break;
             }
-            vcWrapperStrokeWidth = typedArray.getDimension(R.styleable.VerifyCodeView_vcWrapperStrokeWidth, vcWrapperStrokeWidth);
+            vcWrapperStrokeWidth = typedArray.getDimension(R.styleable.VerifyCodeView_vcWrapperStrokeWidth, TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, vcWrapperStrokeWidth, context.getResources().getDisplayMetrics()));
             vcWrapperColor = typedArray.getColor(R.styleable.VerifyCodeView_vcWrapperColor, vcWrapperColor);
             vcNextWrapperColor = typedArray.getColor(R.styleable.VerifyCodeView_vcNextWrapperColor, vcNextWrapperColor);
             String fontPath = typedArray.getString(R.styleable.VerifyCodeView_vcTextFont);
@@ -365,6 +366,15 @@ public class VerifyCodeView extends View {
         }
         vcTextBuilder = new StringBuilder();
         vcTextBuilder.append(code);
+        invalidate();
+    }
+
+    /**
+     * set verify code text font
+     * @param path relative path from assets directory
+     */
+    public void setVcTextFont(String path){
+        this.vcTextFont = Typeface.createFromAsset(getContext().getAssets(), path);
         invalidate();
     }
 

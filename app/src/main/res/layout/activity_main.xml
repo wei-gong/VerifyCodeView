@@ -16,15 +16,7 @@
             android:id="@+id/vc_underLine"
             android:layout_width="240dp"
             android:layout_height="50dp"
-            android:layout_marginTop="32dp"
-            app:vcTextColor="#000000"
-            app:vcTextCount="4"
-            app:vcTextSize="36sp"
-            app:vcDividerWidth="8dp"
-            app:vcWrapper="underLine"
-            app:vcWrapperColor="#313335"
-            app:vcNextWrapperColor="#3f51b5"
-            app:vcWrapperStrokeWidth="2dp" />
+            android:layout_marginTop="32dp" />
 
         <com.github.gongw.VerifyCodeView
             android:id="@+id/vc_centerLine"

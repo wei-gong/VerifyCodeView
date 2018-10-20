@@ -26,7 +26,7 @@ public class MainActivity extends AppCompatActivity {
     private VerifyCodeView.OnAllFilledListener listener = new VerifyCodeView.OnAllFilledListener() {
         @Override
         public void onAllFilled(String text) {
-            Toast.makeText(MainActivity.this, "filled!", Toast.LENGTH_SHORT).show();
+            Toast.makeText(MainActivity.this, "filled by "+text, Toast.LENGTH_SHORT).show();
         }
     };
 }
