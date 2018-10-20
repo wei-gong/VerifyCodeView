@@ -22,7 +22,8 @@
             app:vcTextSize="36sp"
             app:vcDividerWidth="8dp"
             app:vcWrapper="underLine"
-            app:vcWrapperColor="#3c3f41"
+            app:vcWrapperColor="#313335"
+            app:vcNextWrapperColor="#32ae49"
             app:vcWrapperStrokeWidth="2dp" />
 
         <com.github.gongw.VerifyCodeView
@@ -35,8 +36,9 @@
             app:vcTextSize="36sp"
             app:vcDividerWidth="8dp"
             app:vcWrapper="centerLine"
-            app:vcWrapperColor="#d37562"
-            app:vcWrapperStrokeWidth="3dp"/>
+            app:vcWrapperColor="#313335"
+            app:vcNextWrapperColor="#b63b21"
+            app:vcWrapperStrokeWidth="2dp"/>
 
         <com.github.gongw.VerifyCodeView
             android:id="@+id/vc_square"
@@ -49,6 +51,7 @@
             app:vcDividerWidth="8dp"
             app:vcWrapper="square"
             app:vcWrapperColor="#90b65c"
+            app:vcNextWrapperColor="#139d57"
             app:vcWrapperStrokeWidth="2dp"/>
 
         <com.github.gongw.VerifyCodeView
@@ -62,7 +65,8 @@
             app:vcDividerWidth="8dp"
             app:vcWrapper="circle"
             app:vcWrapperColor="#38cbf4"
-            app:vcWrapperStrokeWidth="2dp" />
+            app:vcNextWrapperColor="#0078d7"
+            app:vcWrapperStrokeWidth="2dp"/>
 
     </LinearLayout>
 

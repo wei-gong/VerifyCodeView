@@ -92,7 +92,11 @@ public class VerifyCodeView extends View {
      */
     private int vcWrapperColor = Color.BLACK;
     /**
-     * the stroke width of wrapper contains verify code
+     * the color of wrapper which is the next one to be filled
+     */
+    private int vcNextWrapperColor = Color.GREEN;
+    /**
+     * the stroke width of wrapper
      */
     private float vcWrapperStrokeWidth = 1;
     /**
@@ -100,19 +104,19 @@ public class VerifyCodeView extends View {
      */
     private Paint vcWrapperPaint;
     /**
-     * the value of under line verify code wrapper
+     * the value of under line wrapper
      */
     private static final int WRAPPER_UNDER_LINE = 0;
     /**
-     * the value of center line verify code wrapper
+     * the value of center line wrapper
      */
     private static final int WRAPPER_CENTER_LINE = 1;
     /**
-     * the value of square verify code wrapper
+     * the value of square wrapper
      */
     private static final int WRAPPER_SQUARE = 2;
     /**
-     * the value of circle verify code wrapper
+     * the value of circle wrapper
      */
     private static final int WRAPPER_CIRCLE = 3;
     /**
@@ -123,6 +127,10 @@ public class VerifyCodeView extends View {
      * boundaries of every verify code
      */
     private RectF[] vcTextRects;
+    /**
+     * hide key board automatically when verify code all filled
+     */
+    private boolean autoHideKeyboard = true;
 
     public VerifyCodeView(Context context) {
         super(context);
@@ -179,6 +187,7 @@ public class VerifyCodeView extends View {
             }
             vcWrapperStrokeWidth = typedArray.getDimension(R.styleable.VerifyCodeView_vcWrapperStrokeWidth, vcWrapperStrokeWidth);
             vcWrapperColor = typedArray.getColor(R.styleable.VerifyCodeView_vcWrapperColor, vcWrapperColor);
+            vcNextWrapperColor = typedArray.getColor(R.styleable.VerifyCodeView_vcNextWrapperColor, vcNextWrapperColor);
             String fontPath = typedArray.getString(R.styleable.VerifyCodeView_vcTextFont);
             if(!TextUtils.isEmpty(fontPath)){
                 vcTextFont = Typeface.createFromAsset(context.getAssets(), fontPath);
@@ -260,6 +269,7 @@ public class VerifyCodeView extends View {
                 canvas.drawText(vcTextBuilder.toString(), i, i+1, vcTextPositions[i].x, vcTextPositions[i].y, vcTextPaint);
             }
             if(vcWrapper != null){
+                vcWrapperPaint.setColor(hasFocus() && i == realTextLen ? vcNextWrapperColor: vcWrapperColor);
                 //draw wrapper if it is not covered
                 if(!vcWrapper.isCovered() || i >= realTextLen){
                     vcWrapper.drawWrapper(canvas, vcWrapperPaint, vcOuterRects[i], vcTextRects[i]);
@@ -273,8 +283,8 @@ public class VerifyCodeView extends View {
     public boolean onTouchEvent(MotionEvent event) {
         super.onTouchEvent(event);
         if(event.getAction() == MotionEvent.ACTION_DOWN){
-            //show keyboard to enter text
             requestFocus();
+            //show keyboard to enter text
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.showSoftInput(this, InputMethodManager.SHOW_FORCED);
@@ -309,8 +319,9 @@ public class VerifyCodeView extends View {
             vcTextBuilder.append(event.getDisplayLabel());
             invalidate();
         }
-        //hide keyboard when code is enough
-        if(vcTextBuilder.length() >= vcTextCount){
+        if(vcTextBuilder.length() >= vcTextCount && autoHideKeyboard){
+            clearFocus();
+            //hide keyboard when code is enough
             InputMethodManager imm = (InputMethodManager) getContext().getSystemService(Context.INPUT_METHOD_SERVICE);
             if (imm != null) {
                 imm.hideSoftInputFromWindow(getWindowToken(), 0);
@@ -359,5 +370,13 @@ public class VerifyCodeView extends View {
     public void setVcWrapper(VerifyCodeWrapper vcWrapper){
         this.vcWrapper = vcWrapper;
         invalidate();
+    }
+
+    /**
+     * whether to hide key board automatically when verify code all filled
+     * @param hide
+     */
+    public void setAutoHideKeyboard(boolean hide){
+        this.autoHideKeyboard = hide;
     }
 }

@@ -15,6 +15,7 @@
             <enum name="circle" value="3"/>
         </attr>
         <attr name="vcWrapperColor" format="color|reference"/>
+        <attr name="vcNextWrapperColor" format="color|reference"/>
         <attr name="vcWrapperStrokeWidth" format="dimension|reference"/>
     </declare-styleable>
 
