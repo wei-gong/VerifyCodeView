@@ -407,7 +407,7 @@ public class VerifyCodeView extends View {
 
     /**
      * whether to hide key board automatically when verify code all filled
-     * @param hide
+     * @param hide hide key board automatically when verify code all filled
      */
     public void setAutoHideKeyboard(boolean hide){
         this.autoHideKeyboard = hide;
