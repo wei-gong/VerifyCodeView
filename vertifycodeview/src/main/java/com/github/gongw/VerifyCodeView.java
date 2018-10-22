@@ -207,18 +207,8 @@ public class VerifyCodeView extends View {
         vcTextPositions = new PointF[vcTextCount];
         vcOuterRects = new RectF[vcTextCount];
         vcTextRects = new RectF[vcTextCount];
-        //init text paint
-        vcTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        vcTextPaint.setStyle(Paint.Style.FILL_AND_STROKE);
-        vcTextPaint.setColor(vcTextColor);
-        vcTextPaint.setTextSize(vcTextSize);
-        vcTextPaint.setTypeface(vcTextFont);
-        vcTextPaint.setTextAlign(Paint.Align.CENTER);
-        //init wrapper paint
-        vcWrapperPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
-        vcWrapperPaint.setStyle(Paint.Style.STROKE);
-        vcWrapperPaint.setColor(vcWrapperColor);
-        vcWrapperPaint.setStrokeWidth(vcWrapperStrokeWidth);
+        //init and set paint config
+        initPaint();
         //receive focus while in touch mode
         setFocusableInTouchMode(true);
         //get screen width and height
@@ -272,6 +262,7 @@ public class VerifyCodeView extends View {
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        initPaint();
         int realTextLen = vcTextBuilder.length();
         for(int i = 0; i< vcTextCount; i++){
             if(i < realTextLen){
@@ -285,7 +276,28 @@ public class VerifyCodeView extends View {
                 }
             }
         }
+    }
 
+    /**
+     * init and set paint config
+     */
+    private void initPaint(){
+        //init text paint
+        if(vcTextPaint == null){
+            vcTextPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        }
+        vcTextPaint.setStyle(Paint.Style.FILL_AND_STROKE);
+        vcTextPaint.setColor(vcTextColor);
+        vcTextPaint.setTextSize(vcTextSize);
+        vcTextPaint.setTypeface(vcTextFont);
+        vcTextPaint.setTextAlign(Paint.Align.CENTER);
+        //init wrapper paint
+        if(vcWrapperPaint == null){
+            vcWrapperPaint = new Paint(Paint.ANTI_ALIAS_FLAG);
+        }
+        vcWrapperPaint.setStyle(Paint.Style.STROKE);
+        vcWrapperPaint.setColor(vcWrapperColor);
+        vcWrapperPaint.setStrokeWidth(vcWrapperStrokeWidth);
     }
 
     @Override
@@ -346,9 +358,128 @@ public class VerifyCodeView extends View {
     }
 
     /**
+     * get verify code text color
+     * @return verify code text color
+     */
+    public int getVcTextColor() {
+        return vcTextColor;
+    }
+
+    /**
+     * set verify code text color
+     * @param vcTextColor verify code text color
+     */
+    public void setVcTextColor(int vcTextColor) {
+        if(this.vcTextColor == vcTextColor){
+            return;
+        }
+        this.vcTextColor = vcTextColor;
+        invalidate();
+    }
+
+    /**
+     * get verify code text size by sp
+     * @return verify code text size by sp
+     */
+    public float getVcTextSize() {
+        return vcTextSize;
+    }
+
+    /**
+     * set verify code text size by sp
+     * @param vcTextSize verify code text size by sp
+     */
+    public void setVcTextSize(float vcTextSize) {
+        if(this.vcTextSize == vcTextSize){
+            return;
+        }
+        this.vcTextSize = vcTextSize;
+        invalidate();
+    }
+
+    /**
+     * get verify code item divider width by dp
+     * @return verify code item divider width by dp
+     */
+    public float getVcDividerWidth() {
+        return vcDividerWidth;
+    }
+
+    /**
+     * set verify code item divider width by dp
+     * @param vcDividerWidth verify code item divider width by dp
+     */
+    public void setVcDividerWidth(float vcDividerWidth) {
+        if(this.vcDividerWidth == vcDividerWidth){
+            return;
+        }
+        this.vcDividerWidth = vcDividerWidth;
+        invalidate();
+    }
+
+    /**
+     * get verify code wrapper color
+     * @return verify code wrapper color
+     */
+    public int getVcWrapperColor() {
+        return vcWrapperColor;
+    }
+
+    /**
+     * set verify code wrapper color
+     * @param vcWrapperColor verify code wrapper color
+     */
+    public void setVcWrapperColor(int vcWrapperColor) {
+        if(this.vcWrapperColor == vcWrapperColor){
+            return;
+        }
+        this.vcWrapperColor = vcWrapperColor;
+        invalidate();
+    }
+
+    /**
+     * get the next filled verify code wrapper color
+     * @return the next filled verify code wrapper color
+     */
+    public int getVcNextWrapperColor() {
+        return vcNextWrapperColor;
+    }
+
+    /**
+     * set the next filled verify code wrapper color
+     * @param vcNextWrapperColor the next filled verify code wrapper color
+     */
+    public void setVcNextWrapperColor(int vcNextWrapperColor) {
+        if(this.vcNextWrapperColor == vcNextWrapperColor){
+            return;
+        }
+        this.vcNextWrapperColor = vcNextWrapperColor;
+        invalidate();
+    }
+
+    /**
+     * get verify code wrapper stroke width by dp
+     * @return the verify code wrapper stroke width by dp
+     */
+    public float getVcWrapperStrokeWidth() {
+        return vcWrapperStrokeWidth;
+    }
+
+    /**
+     * set verify code wrapper stroke width by dp
+     * @param vcWrapperStrokeWidth the verify code wrapper stroke width by dp
+     */
+    public void setVcWrapperStrokeWidth(float vcWrapperStrokeWidth) {
+        if(this.vcWrapperStrokeWidth == vcWrapperStrokeWidth){
+            return;
+        }
+        this.vcWrapperStrokeWidth = vcWrapperStrokeWidth;
+        invalidate();
+    }
+
+    /**
      * get verify code string
-     *
-     * @return code
+     * @return the verify code string
      */
     public String getVcText() {
         return vcTextBuilder != null ? vcTextBuilder.toString() : "";
@@ -356,7 +487,7 @@ public class VerifyCodeView extends View {
 
     /**
      * set verify code text
-     * @param code code
+     * @param code the verify code string
      */
     public void setVcText(String code) {
         if (code == null)
@@ -379,12 +510,32 @@ public class VerifyCodeView extends View {
     }
 
     /**
-     * set verify code count
-     * @param count verify code count
+     * set verify code text typeface
+     * @param vcTextFont verify code text typeface
      */
-    public void setVcTextCount(int count){
-        this.vcTextCount = count;
+    public void setVcTextFont(Typeface vcTextFont) {
+        this.vcTextFont = vcTextFont;
         invalidate();
+    }
+
+    /**
+     * set verify code count
+     * @param vcTextCount verify code count
+     */
+    public void setVcTextCount(int vcTextCount){
+        if(this.vcTextCount == vcTextCount){
+            return;
+        }
+        this.vcTextCount = vcTextCount;
+        invalidate();
+    }
+
+    /**
+     * get verify code count
+     * @return verify code count
+     */
+    public int getVcTextCount() {
+        return vcTextCount;
     }
 
     /**
@@ -436,10 +587,16 @@ public class VerifyCodeView extends View {
         void onAllFilled(String text);
     }
 
+    /**
+     * after verify code text changed, its method will be called
+     */
     public void setOnTextChangedListener(OnTextChangedListener onTextChangedListener){
         this.onTextChangedListener = onTextChangedListener;
     }
 
+    /**
+     * after verify code item all filled, its method will be called
+     */
     public void setOnAllFilledListener(OnAllFilledListener onAllFilledListener){
         this.onAllFilledListener = onAllFilledListener;
     }
