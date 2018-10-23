@@ -8,9 +8,6 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
-import android.os.Build;
-import android.support.annotation.Nullable;
-import android.support.annotation.RequiresApi;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -49,7 +46,7 @@ public class VerifyCodeView extends View {
      */
     private int vcTextColor = Color.BLACK;
     /**
-     * verification code text size,unit is sp
+     * verification code text size by sp
      */
     private float vcTextSize = 36;
     /**
@@ -61,7 +58,7 @@ public class VerifyCodeView extends View {
      */
     private Paint vcTextPaint;
     /**
-     * divider width of every verify code,unit is dp
+     * divider width by dp between verify code item
      */
     private float vcDividerWidth = 6;
     /**
@@ -97,7 +94,7 @@ public class VerifyCodeView extends View {
      */
     private int vcNextWrapperColor = Color.BLACK;
     /**
-     * the stroke width of wrapper,unit is dp
+     * the stroke width of wrapper by dp
      */
     private float vcWrapperStrokeWidth = 1;
     /**
@@ -146,19 +143,13 @@ public class VerifyCodeView extends View {
         init(context, null);
     }
 
-    public VerifyCodeView(Context context, @Nullable AttributeSet attrs) {
+    public VerifyCodeView(Context context, AttributeSet attrs) {
         super(context, attrs);
         init(context, attrs);
     }
 
-    public VerifyCodeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public VerifyCodeView(Context context, AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
-        init(context, attrs);
-    }
-
-    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
-    public VerifyCodeView(Context context, @Nullable AttributeSet attrs, int defStyleAttr, int defStyleRes) {
-        super(context, attrs, defStyleAttr, defStyleRes);
         init(context, attrs);
     }
 
@@ -580,22 +571,23 @@ public class VerifyCodeView extends View {
      */
     public interface OnAllFilledListener{
         /**
-         * this method is called after verify code item all filled,
-         * you can write your verify logic here
+         * this method is called after verify code item all filled, you can write your verify logic here
          * @param text text after changed
          */
         void onAllFilled(String text);
     }
 
     /**
-     * after verify code text changed, its method will be called
+     * register a callback to be invoked after verify code text changed
+     * @param onTextChangedListener the callback that will run
      */
     public void setOnTextChangedListener(OnTextChangedListener onTextChangedListener){
         this.onTextChangedListener = onTextChangedListener;
     }
 
     /**
-     * after verify code item all filled, its method will be called
+     * register a callback to be invoked after verify code item all filled
+     * @param onAllFilledListener the callback that will run
      */
     public void setOnAllFilledListener(OnAllFilledListener onAllFilledListener){
         this.onAllFilledListener = onAllFilledListener;
