@@ -1,11 +1,11 @@
 VerifyCodeView
 ==========
 
-- ##### VerifyCodeView is designed as two parts, the verify code text part, and the wrapper part. 
+- #### VerifyCodeView is designed as two parts, the verify code text part, and the wrapper part. 
 
-- ##### The Wrapper is the way to show verify code text, VerifyCodeView provides four default wrappers, they are UnderLineWrapper, CenterLineWrapper, SquareWrapper and CircleWrapper. 
+- #### The Wrapper is the way to show verify code text, VerifyCodeView provides four default wrappers, they are UnderLineWrapper, CenterLineWrapper, SquareWrapper and CircleWrapper. 
 
-- ##### You can easily customize your own wrapper by implementing VerifyCodeWrapper, and set it by invoking the setVcWrapper method.
+- #### You can easily customize your own wrapper by implementing VerifyCodeWrapper, and set it by invoking the setVcWrapper method.
 
 ![CircleView](/images/verifycode_display.gif)
 
