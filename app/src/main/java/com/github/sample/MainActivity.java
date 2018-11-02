@@ -1,9 +1,9 @@
 package com.github.sample;
 
+import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.widget.Toast;
-import com.github.gongw.VerifyCodeView;
+import android.view.View;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -12,21 +12,21 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        VerifyCodeView underLine = findViewById(R.id.vc_underLine);
-        VerifyCodeView centerLine = findViewById(R.id.vc_centerLine);
-        VerifyCodeView square = findViewById(R.id.vc_square);
-        VerifyCodeView circle = findViewById(R.id.vc_circle);
-        underLine.setOnAllFilledListener(listener);
-        centerLine.setOnAllFilledListener(listener);
-        square.setOnAllFilledListener(listener);
-        circle.setOnAllFilledListener(listener);
+        final FragmentManager fragmentManager = getSupportFragmentManager();
 
+        findViewById(R.id.button1).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentManager.beginTransaction().replace(R.id.container, new WrapperFragment()).addToBackStack("wrapper").commit();
+            }
+        });
+
+        findViewById(R.id.button2).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                fragmentManager.beginTransaction().replace(R.id.container, new AutoFilledFragment()).addToBackStack("autofilled").commit();
+            }
+        });
     }
 
-    private VerifyCodeView.OnAllFilledListener listener = new VerifyCodeView.OnAllFilledListener() {
-        @Override
-        public void onAllFilled(String text) {
-            Toast.makeText(MainActivity.this, "filled by "+text, Toast.LENGTH_SHORT).show();
-        }
-    };
 }

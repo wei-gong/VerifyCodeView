@@ -1,6 +1,9 @@
 package com.github.gongw;
 
+import android.Manifest;
+import android.app.Activity;
 import android.content.Context;
+import android.content.pm.PackageManager;
 import android.content.res.TypedArray;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.support.v4.app.ActivityCompat;
 import android.text.InputType;
 import android.text.TextUtils;
 import android.util.AttributeSet;
@@ -21,11 +25,15 @@ import android.view.inputmethod.BaseInputConnection;
 import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
+import com.github.gongw.sms.ReceiveSmsMessageListener;
+import com.github.gongw.sms.SmsReceiver;
+import com.github.gongw.sms.SmsVerifyCodeFilter;
 import com.github.gongw.wrapper.CenterLineWrapper;
 import com.github.gongw.wrapper.CircleWrapper;
 import com.github.gongw.wrapper.SquareWrapper;
 import com.github.gongw.wrapper.UnderLineWrapper;
 import com.github.gongw.wrapper.VerifyCodeWrapper;
+
 
 /**
  * A view designed for inputting verification code.
@@ -325,6 +333,9 @@ public class VerifyCodeView extends View {
         //delete the last code when backspace key pressed
         if(keyCode == KeyEvent.KEYCODE_DEL && vcTextBuilder.length() > 0){
             vcTextBuilder.deleteCharAt(vcTextBuilder.length() - 1);
+            if(onTextChangedListener != null){
+                onTextChangedListener.onTextChanged(vcTextBuilder.toString());
+            }
             invalidate();
         }else if(keyCode >= KeyEvent.KEYCODE_0 && keyCode <= KeyEvent.KEYCODE_9 && vcTextBuilder.length() < vcTextCount){
             //only add number code to builder
@@ -486,8 +497,17 @@ public class VerifyCodeView extends View {
         if (code.length() > vcTextCount) {
             code = code.substring(0, vcTextCount);
         }
+        if(vcTextBuilder.toString().equals(code)){
+            return;
+        }
         vcTextBuilder = new StringBuilder();
         vcTextBuilder.append(code);
+        if(onTextChangedListener != null){
+            onTextChangedListener.onTextChanged(vcTextBuilder.toString());
+        }
+        if(code.length() >= vcTextCount && onAllFilledListener != null){
+            onAllFilledListener.onAllFilled(vcTextBuilder.toString());
+        }
         invalidate();
     }
 
@@ -532,10 +552,15 @@ public class VerifyCodeView extends View {
     /**
      * clear all verify code text
      */
-    public void clearText(){
-        if(vcTextBuilder.length() > 0){
-            vcTextBuilder.delete(0, vcTextBuilder.length()-1);
+    public void clearVcText(){
+        if(vcTextBuilder.length() == 0){
+            return;
         }
+        vcTextBuilder.delete(0, vcTextBuilder.length()-1);
+        if(onTextChangedListener != null){
+            onTextChangedListener.onTextChanged(vcTextBuilder.toString());
+        }
+        invalidate();
     }
 
     /**
@@ -591,5 +616,55 @@ public class VerifyCodeView extends View {
      */
     public void setOnAllFilledListener(OnAllFilledListener onAllFilledListener){
         this.onAllFilledListener = onAllFilledListener;
+    }
+
+    /**
+     * the broadcast receiver to receive sms message
+     */
+    private SmsReceiver smsReceiver;
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        //stop observing sms message when detached
+        stopListen();
+    }
+
+    /**
+     * register a broadcast receiver to receive sms message,
+     * read the sms message and filter out the verify code to filled verifycodeview
+     * @param filter policy to filter verify code from sms message
+     */
+    public void startListen(final SmsVerifyCodeFilter filter){
+        //check RECEIVE_SMS READ_SMS permissions, if not granted then request
+        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.RECEIVE_SMS) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions((Activity) getContext(), new String[] {Manifest.permission.RECEIVE_SMS}, 0);
+        }
+        if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED){
+            ActivityCompat.requestPermissions((Activity) getContext(), new String[] {Manifest.permission.READ_SMS}, 1);
+        }
+        if(smsReceiver == null){
+            smsReceiver = new SmsReceiver();
+        }
+        smsReceiver.setReceiveSmsMessageListener(new ReceiveSmsMessageListener() {
+            @Override
+            public void onReceive(String smsSender, String smsBody) {
+                String verifyCode = filter.filterVerifyCode(smsSender, smsBody);
+                if(verifyCode != null){
+                    setVcText(verifyCode);
+                }
+            }
+        });
+        smsReceiver.register(getContext());
+    }
+
+    /**
+     * unregister the sms message receiver
+     */
+    public void stopListen(){
+        if(smsReceiver != null){
+            smsReceiver.unregister(getContext());
+            smsReceiver = null;
+        }
     }
 }
