@@ -1,13 +1,18 @@
 VerifyCodeView
 ==========
+#### VerifyCodeView is a android view for inputting Verification Code.
 
-#### VerifyCodeView supports these following functions: 
+Features
+===========
 
 - #### Numerical verification code.
 
 - #### Customize appearance of border. 
 
 - #### Automatic fill verification code by SMS.
+
+ScreenCapture
+===========
 
 ![CircleView](/images/verifycode_display.gif)
 
