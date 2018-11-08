@@ -11,7 +11,7 @@ VerifyCodeView
 
 ![CircleView](/images/verifycode_display.gif)
 
-![](C:\Users\lenovo\Desktop\auto_filled.gif)
+![](/images/auto_filled.gif)
 
 Dependency
 ===========
