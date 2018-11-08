@@ -77,7 +77,7 @@ public class SmsReceiver extends BroadcastReceiver {
 
     /**
      * unregister this broadcast receiver
-     * @param context
+     * @param context the context broadcast receiver running in
      */
     public void unregister(Context context){
         context.unregisterReceiver(this);

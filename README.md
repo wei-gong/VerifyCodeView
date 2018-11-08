@@ -1,15 +1,17 @@
 VerifyCodeView
 ==========
 
-- #### VerifyCodeView is designed as two parts, the verify code text part, and the wrapper part. 
+#### VerifyCodeView supports these following functions: 
 
-- #### The Wrapper is the way to show verify code text, VerifyCodeView provides four default wrappers, they are UnderLineWrapper, CenterLineWrapper, SquareWrapper and CircleWrapper. 
+- #### Numerical verification code.
 
-- #### You can easily customize your own wrapper by implementing VerifyCodeWrapper, and set it by invoking the setVcWrapper method.
+- #### Customize appearance of border. 
+
+- #### Automatic fill verification code by SMS.
 
 ![CircleView](/images/verifycode_display.gif)
 
-
+![](C:\Users\lenovo\Desktop\auto_filled.gif)
 
 Dependency
 ===========
@@ -18,7 +20,7 @@ Dependency
 
 ```groovy
 dependencies {
-    compile 'com.github.gongw:verifycodeview:1.0.0'
+    compile 'com.github.gongw:verifycodeview:1.0.1'
 }
 ```
 
@@ -28,7 +30,7 @@ dependencies {
 <dependency>
   <groupId>com.github.gongw</groupId>
   <artifactId>verifycodeview</artifactId>
-  <version>1.0.0</version>
+  <version>1.0.1</version>
   <type>pom</type>
 </dependency>
 ```
@@ -103,6 +105,21 @@ verifycodeView.setVcWrapper(new VerifyCodeWrapper() {
         		canvas.drawLine(textRectF.left - textRectF.width()/2, rectF.height()/2, 									textRectF.right + textRectF.width() / 2, rectF.height()/2, 									paint);
             }
         });
+```
+
+
+
+
+- #### Auto filled by SMS
+
+```java
+SmsVerifyCodeFilter filter = new SmsVerifyCodeFilter();
+filter.setSmsSenderStart("1096");
+filter.setSmsSenderContains("5225");
+filter.setSmsBodyStart("验证短信：");
+filter.setSmsBodyContains("验证码");
+filter.setVerifyCodeCount(verifyCodeView.getVcTextCount());
+verifyCodeView.startListen(filter);
 ```
 
 
