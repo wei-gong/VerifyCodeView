@@ -11,6 +11,7 @@ import android.graphics.Paint;
 import android.graphics.PointF;
 import android.graphics.RectF;
 import android.graphics.Typeface;
+import android.net.Uri;
 import android.support.v4.app.ActivityCompat;
 import android.text.InputType;
 import android.text.TextUtils;
@@ -26,6 +27,7 @@ import android.view.inputmethod.EditorInfo;
 import android.view.inputmethod.InputConnection;
 import android.view.inputmethod.InputMethodManager;
 import com.github.gongw.sms.ReceiveSmsMessageListener;
+import com.github.gongw.sms.SmsObserver;
 import com.github.gongw.sms.SmsReceiver;
 import com.github.gongw.sms.SmsVerifyCodeFilter;
 import com.github.gongw.wrapper.CenterLineWrapper;
@@ -622,11 +624,15 @@ public class VerifyCodeView extends View {
      * the broadcast receiver to receive sms message
      */
     private SmsReceiver smsReceiver;
+    /**
+     * the content observer to observe sms message change
+     */
+    private SmsObserver smsObserver;
 
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
-        //stop observing sms message when detached
+        //stop listening sms message when detached
         stopListen();
     }
 
@@ -643,6 +649,7 @@ public class VerifyCodeView extends View {
         if(ActivityCompat.checkSelfPermission(getContext(), Manifest.permission.READ_SMS) != PackageManager.PERMISSION_GRANTED){
             ActivityCompat.requestPermissions((Activity) getContext(), new String[] {Manifest.permission.READ_SMS}, 1);
         }
+        //get verify code by receiving sms message broadcast
         if(smsReceiver == null){
             smsReceiver = new SmsReceiver();
         }
@@ -656,6 +663,20 @@ public class VerifyCodeView extends View {
             }
         });
         smsReceiver.register(getContext());
+        //get verify code by observing sms message content
+        if(smsObserver == null){
+            smsObserver = new SmsObserver(getContext());
+        }
+        smsObserver.setReceiveSmsMessageListener(new ReceiveSmsMessageListener() {
+            @Override
+            public void onReceive(String smsSender, String smsBody) {
+                String verifyCode = filter.filterVerifyCode(smsSender, smsBody);
+                if(verifyCode != null){
+                    setVcText(verifyCode);
+                }
+            }
+        });
+        getContext().getContentResolver().registerContentObserver(Uri.parse("content://sms/inbox"), true, smsObserver);
     }
 
     /**
@@ -665,6 +686,10 @@ public class VerifyCodeView extends View {
         if(smsReceiver != null){
             smsReceiver.unregister(getContext());
             smsReceiver = null;
+        }
+        if(smsObserver != null){
+            getContext().getContentResolver().unregisterContentObserver(smsObserver);
+            smsObserver = null;
         }
     }
 }

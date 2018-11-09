@@ -5,6 +5,7 @@ import android.database.ContentObserver;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.Telephony;
 
 /**
@@ -21,10 +22,9 @@ public class SmsObserver extends ContentObserver {
     /**
      * Creates a Sms content observer.
      * @param context The context the observer is running in.
-     * @param handler The handler to run {@link #onChange} on, or null if none.
      */
-    public SmsObserver(Context context, Handler handler) {
-        super(handler);
+    public SmsObserver(Context context) {
+        super(new Handler(Looper.getMainLooper()));
         this.context = context;
     }
 
