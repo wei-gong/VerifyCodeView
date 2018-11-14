@@ -676,7 +676,7 @@ public class VerifyCodeView extends View {
                 }
             }
         });
-        getContext().getContentResolver().registerContentObserver(Uri.parse("content://sms/inbox"), true, smsObserver);
+        smsObserver.register();
     }
 
     /**
@@ -688,7 +688,7 @@ public class VerifyCodeView extends View {
             smsReceiver = null;
         }
         if(smsObserver != null){
-            getContext().getContentResolver().unregisterContentObserver(smsObserver);
+            smsObserver.unregister();
             smsObserver = null;
         }
     }

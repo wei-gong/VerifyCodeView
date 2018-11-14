@@ -61,4 +61,18 @@ public class SmsObserver extends ContentObserver {
             cursor.close();
         }
     }
+
+    /**
+     * register this content observer to observe change of sms message inbox
+     */
+    public void register(){
+        context.getContentResolver().registerContentObserver(Uri.parse("content://sms/inbox"), true, this);
+    }
+
+    /**
+     * unregister this content observer
+     */
+    public void unregister(){
+        context.getContentResolver().unregisterContentObserver(this);
+    }
 }
