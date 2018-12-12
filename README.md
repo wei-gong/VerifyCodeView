@@ -25,7 +25,7 @@ Dependency
 
 ```groovy
 dependencies {
-    compile 'com.github.gongw:verifycodeview:1.0.1'
+    compile 'com.github.gongw:verifycodeview:1.0.2'
 }
 ```
 
@@ -35,7 +35,7 @@ dependencies {
 <dependency>
   <groupId>com.github.gongw</groupId>
   <artifactId>verifycodeview</artifactId>
-  <version>1.0.1</version>
+  <version>1.0.2</version>
   <type>pom</type>
 </dependency>
 ```
